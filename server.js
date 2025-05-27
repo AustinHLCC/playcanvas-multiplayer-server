@@ -24,17 +24,18 @@ io.on('connection', (socket) => {
 
     socket.broadcast.emit('playerJoined', players[socket.id]);
 
-    socket.on('positionUpdate', (data) => {
-        if (players[data.id]) {
-            players[data.id] = { ...players[data.id], x: data.x, y: data.y, z: data.z };
-            socket.broadcast.emit('playerMoved', data);
-        }
-    });
+    socket.on('rotationUpdate', (data) => {
+    players[data.id].rot = data.rot;
+    socket.broadcast.emit('playerRotated', data);
+});
 
-    socket.on('disconnect', () => {
-        delete players[socket.id];
-        io.emit('killPlayer', socket.id);
-    });
+socket.on('playerColorChange', (data) => {
+    if (players[data.id]) {
+        players[data.id].color = data.color;
+        socket.broadcast.emit('playerColorChanged', data);
+    }
+});
+
 });
 
 const PORT = process.env.PORT || 3000;
